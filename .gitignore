@@ -1,0 +1,13 @@
+game/addons/*
+automation/working_tree_config.txt
+automation/post_commit.txt
+game/.import/*
+game/*.translation
+game/builds/*
+exports/*
+logs/*
+docs/*.html
+docs/*.epub
+website/*.html
+game/export_presets.cfg
+
