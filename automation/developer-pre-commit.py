@@ -20,7 +20,7 @@ def run():
         if not tests.run():
             sys.exit(1)
     with open(os.path.join('automation','post_commit.json'),mode='w') as what_changed:
-            what_changed.writeline(staged_paths.dump())
+            what_changed.write(staged_paths.dump())
 
 if __name__ == "__main__":
     run()
