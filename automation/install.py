@@ -39,13 +39,13 @@ class InstallRole:
             os.replace(os.path.join(".git","hooks","post-commit"),os.path.join(".git","hooks","pre-commit.sample"))
 
     def install(self):
-        if role == "developer":
+        if self.role == "developer":
             self._clear_artist_install()
             self._install_as_developer()
-        elif role == "artist":
+        elif self.role == "artist":
             self._clear_developer_install()
             self._install_as_artist()
-        elif role == "fresh":
+        elif self.role == "fresh":
             input_role = ""
             while not input_role in ["developer","artist"]:
                 input_role = input("Which role to install as? (Allowed values: \"developer\", \"artist\")")
