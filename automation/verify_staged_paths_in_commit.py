@@ -42,8 +42,8 @@ class StagedPathsInCommit:
     def verify_only_content_or_automation_changes_staged_not_both(self):
         if self.game_files_changed or self.assets_changed or self.docs_changed or self.website_changed:
             if self.automation_code_changed:
-                return false
-        return true
+                return False
+        return True
 
 
     def evaluate_staged_paths(self):

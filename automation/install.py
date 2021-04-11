@@ -56,7 +56,7 @@ class InstallRole:
                 input_role = input("Which role to install as? (Allowed values: \"developer\", \"artist\")")
             self.role = input_role
             self.install()
-        write_role()
+        self.write_role()
             
 
 def run():
