@@ -55,8 +55,8 @@ class InstallRole:
             while not input_role in ["developer","artist"]:
                 input_role = input("Which role to install as? (Allowed values: \"developer\", \"artist\")")
             self.role = input_role
+            self.write_role()
             self.install()
-        self.write_role()
             
 
 def run():
