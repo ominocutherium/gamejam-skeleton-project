@@ -39,6 +39,13 @@ class StagedPathsInCommit:
             if line[0] != ' ' and line[:2] != '??':
                 self.paths.append(line.split()[1])
 
+    def verify_only_content_or_automation_changes_staged_not_both(self):
+        if self.game_files_changed or self.assets_changed or self.docs_changed or self.website_changed:
+            if self.automation_code_changed:
+                return false
+        return true
+
+
     def evaluate_staged_paths(self):
         for path in self.paths:
             if path.startswith('automation/') and path.endswith('.py'):
