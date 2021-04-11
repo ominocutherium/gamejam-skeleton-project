@@ -22,7 +22,7 @@ class InstallRole:
 
     def write_role(self):
         with open(os.path.join('automation','working_tree_config.txt'),mode='w') as config_file:
-            config_file.writeline("role {0}".format(self.role))
+            config_file.write("role {0}".format(self.role))
 
 
     def _install_as_developer(self):
