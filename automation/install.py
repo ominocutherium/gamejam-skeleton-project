@@ -12,13 +12,18 @@ class InstallRole:
 
     def get_role_from_working_tree_config(self):
         if os.path.exists(os.path.join('automation','working_tree_config.txt')):
-            with open(os.path.join('automation','working_tree_config.txt')) as config_file:
+            with open(os.path.join('automation','working_tree_config.txt'), mode='r') as config_file:
                 for line in config_file:
                     if len(line.split()) > 1:
                         if line.split()[0] == "role":
                             self.role = line.split(" ",1)[1]
         else:
             self.role = "fresh"
+
+    def write_role(self):
+        with open(os.path.join('automation','working_tree_config.txt'),mode='w') as config_file:
+            config_file.writeline("role {0}".format(self.role))
+
 
     def _install_as_developer(self):
         shutil.copyfile("automation/developer-pre-commit.py",".git/hooks/pre-commit")
@@ -51,6 +56,7 @@ class InstallRole:
                 input_role = input("Which role to install as? (Allowed values: \"developer\", \"artist\")")
             self.role = input_role
             self.install()
+        write_role()
             
 
 def run():
