@@ -14,7 +14,7 @@ class DocsState:
     def get_defaults_from_config(self):
         if os.path.exists(os.path.join('automation','config.txt')):
             with open(os.path.join('automation','config.txt')) as config_file:
-                for line in post_commit_file:
+                for line in config_file:
                     if len(line.split()) > 1:
                         if line.split()[0] == "docs_defaults":
                             self.docs_default_files.append(line.split()[1])
