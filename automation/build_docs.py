@@ -30,3 +30,6 @@ def run():
     state = DocsState()
     state.get_defaults_from_config()
     state.compile_all_docs()
+
+if __name__ == "__main__":
+    run()
