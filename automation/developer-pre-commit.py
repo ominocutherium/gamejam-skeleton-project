@@ -17,7 +17,7 @@ def run():
         print("If you are making changes to your game project, you should not be making changes to the automation scripts. Hook scripts and sync tools should be kept as separate commits for the purposes of also being committed to upstream.")
         sys.exit(1)
     if staged_paths.game_files_changed:
-        if not tests.run():
+        if not tests.run() == 0:
             sys.exit(1)
     with open(os.path.join('automation','post_commit.json'),mode='w') as what_changed:
             what_changed.write(staged_paths.dump())
