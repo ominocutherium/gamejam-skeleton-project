@@ -27,11 +27,6 @@ class DocsState:
         os.chdir(home_dir)
 
 def run():
-    if os.path.exists(os.path.join('automation','post_commit.txt')):
-        with open(os.path.join('automation','post_commit.txt')) as post_commit_file:
-            for line in post_commit_file:
-                if line[:-1] == 'compile docs':
-                    state = DocsState()
-                    state.get_defaults_from_config()
-                    state.compile_all_docs()
-                    break
+    state = DocsState()
+    state.get_defaults_from_config()
+    state.compile_all_docs()
