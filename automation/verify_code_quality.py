@@ -32,7 +32,7 @@ class PreCommitCI:
         for dir_name in self.test_dirs:
             dir_param += 'res://' + dir_name + ','
         self.call_params.append(dir_param)
-        if use_beta:
+        if self.use_beta:
             self.call_params[0] = self.beta_exec_name
         else:
             self.call_params[0] = self.stable_exec_name
