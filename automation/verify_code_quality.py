@@ -7,6 +7,9 @@ import subprocess
 
 class PreCommitCI:
     test_dirs = []
+    use_beta = True
+    stable_exec_name = "godot"
+    beta_exec_name = "godot-beta"
     call_params = ["godot","-d","-s","--path","game/","addons/gut/gut_cmdln.gd","-gexit_on_success","-gignore_pause","-gprefix=test_","-gsuffix=.gd"]
 
     def __init__(self):
@@ -29,6 +32,10 @@ class PreCommitCI:
         for dir_name in self.test_dirs:
             dir_param += 'res://' + dir_name + ','
         self.call_params.append(dir_param)
+        if use_beta:
+            self.call_params[0] = self.beta_exec_name
+        else:
+            self.call_params[0] = self.stable_exec_name
         return subprocess.call(self.call_params)
 
 def run():
