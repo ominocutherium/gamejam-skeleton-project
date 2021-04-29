@@ -10,4 +10,5 @@ docs/*.html
 docs/*.epub
 website/*.html
 game/export_presets.cfg
+automation/__pycache__/*
 
