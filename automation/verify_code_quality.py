@@ -7,7 +7,7 @@ import subprocess
 
 class PreCommitCI:
     test_dirs = []
-    use_beta = True
+    use_beta = False
     stable_exec_name = "godot"
     beta_exec_name = "godot-beta"
     call_params = ["godot","-d","-s","--path","game/","addons/gut/gut_cmdln.gd","-gexit_on_success","-gignore_pause","-gprefix=test_","-gsuffix=.gd"]
