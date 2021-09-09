@@ -35,6 +35,9 @@ Various build information is stored in `automation/config.txt`, which is intende
 * For each directory of unit tests, make a line with `test_dir` then the path of the directory of GUT tests relative to `game/`, e.g. `test_dir tests/game_mechanics` to run the test scripts located in `game/tests/game_mechanics/`.
 * For each document, make a line with `docs_defaults` then the path of the YAML-formatted defaults file to use relative to `docs/`, e.g. `docs_defaults features.yaml` for a defaults file located at `docs/features.yaml`.
 * For each platform to export, make a line with `platform` then the name of the platform, e.g. `platform html5`.
+* To include files in the export templates, make a line that starts with `export_include` and then a path with wildcards; e.g. `game_state/\*.gd`. '*' wildcards are expanded, and paths are relative to `game/`, e.g. if `game_state/\*.gd` is specified, then `game/game_state/player_data.gd` will be included as `res://game_state/player_data.gd` in the export template.
+* To exclude files in export templates which would otherwise be included due to a wildcard include pattern, specify them with a line that starts with `export_exclude`. Like includes, these are relative to `game/` and therefore relative to `res://`.
+* For Itch uploads, make a line which starts with `itch_user` and then the username of the project creator (must match the game's url). Also, make a second line that starts with `itch_game_name`
 
 Then commit the file.
 
@@ -46,3 +49,19 @@ The automation scripts also create and use `automation/working_tree_config.txt` 
 * Godot Unit Test (GUT) addon in project in `game/addons/gut/`
 * Coreutils
 * Pandoc (for compiling markdown docs into other formats)
+
+## TODO (This repository)
+
+* [ ] Implement script which reads `automation/config.txt` and creates export templates; prior to build step
+* [ ] Implement builds
+* [ ] Implement automatic pushing to itch
+* [ ] Blacklist a set of dates for pushing to itch according to config (for, possibly, Godot Wild Jam in which game updates are not allowed during judging)
+* [ ] Implement unit tests for already implemented scripts:
+	* [ ] build_docs.py
+	* [ ] build_game.py
+	* [ ] developer-pre-commit.py
+	* [ ] developer-post-commit.py
+	* [ ] install.py
+	* [ ] verify_code_quality.py
+	* [ ] verify_staged_paths_in_commit.py
+* [ ] Hook running of Python unit tests into code verification steps (after ensuring it is an automation script only commit)
