@@ -57,7 +57,7 @@ The automation scripts also create and use `automation/working_tree_config.txt` 
 * [ ] Implement automatic pushing to itch
 * [ ] Blacklist a set of dates for pushing to itch according to config (for, possibly, Godot Wild Jam in which game updates are not allowed during judging)
 * [ ] Implement unit tests for already implemented scripts:
-	* [ ] build_docs.py
+	* [x] build_docs.py
 	* [ ] build_game.py
 	* [ ] developer-pre-commit.py
 	* [ ] developer-post-commit.py
