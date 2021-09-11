@@ -13,16 +13,19 @@ class InstallRole:
     def get_role_from_working_tree_config(self):
         if os.path.exists(os.path.join('automation','working_tree_config.txt')):
             with open(os.path.join('automation','working_tree_config.txt'), mode='r') as config_file:
-                for line in config_file:
+                for line in config_file.read().splitlines():
                     if len(line.split()) > 1:
                         if line.split()[0] == "role":
                             self.role = line.split(" ",1)[1]
-        else:
+        if self.role == "":
             self.role = "fresh"
 
     def write_role(self):
+        lines_to_write = [
+                "role {0} \n".format(self.role),
+                ]
         with open(os.path.join('automation','working_tree_config.txt'),mode='w') as config_file:
-            config_file.write("role {0}".format(self.role))
+            config_file.writelines(lines_to_write)
 
 
     def _install_as_developer(self):
@@ -41,7 +44,7 @@ class InstallRole:
         if os.path.exists(os.path.join(".git","hooks","pre-commit")):
             os.replace(os.path.join(".git","hooks","pre-commit"),os.path.join(".git","hooks","pre-commit.sample"))
         if os.path.exists(os.path.join(".git","hooks","post-commit")):
-            os.replace(os.path.join(".git","hooks","post-commit"),os.path.join(".git","hooks","pre-commit.sample"))
+            os.replace(os.path.join(".git","hooks","post-commit"),os.path.join(".git","hooks","post-commit.sample"))
 
     def install(self):
         if self.role == "developer":

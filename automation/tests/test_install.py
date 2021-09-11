@@ -20,7 +20,7 @@ class InstallTestCase(unittest.TestCase):
         ir2 = automation.install.InstallRole()
         with mock.patch('automation.install.open',m2):
             ir2.get_role_from_working_tree_config()
-            self.assertEqual(ir.role,"fresh")
+            self.assertEqual(ir2.role,"fresh")
         path_exists_mock.assert_called()
         path_join_mock.assert_called()
 
