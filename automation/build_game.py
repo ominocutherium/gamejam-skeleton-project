@@ -19,31 +19,33 @@ class BuildsToBuild:
                     line_without_newline = line[:-1]
                     data = line_without_newline.split()
                     if len(data) > 1:
-                        if data[0] = "include_files":
+                        if data[0] == "include_files":
                             filepath_to_expand = line_without_newline.split(None,1)[1]
                             platform_build_obj.add_glob_to_include(filepath_to_expand)
-                        elif data[0] = "exclude_files":
+                        elif data[0] == "exclude_files":
                             filepath_to_expand = line_without_newline.split(None,1)[1]
                             platform_build_obj.add_glob_to_exclude(filepath_to_expand)
-                        elif data[0] = "build_platform" and len(data) > 3:
+                        elif data[0] == "build_platform" and len(data) > 3:
                             platform_build_obj = BuildInfo()
-                            builds_by_platform.append(platform_build_obj)
+                            self.builds_by_platform.append(platform_build_obj)
                             platform_build_obj.platform_template_name = data[1]
                             platform_build_obj.itch_channel_name = data[2]
                             platform_build_obj.build_dir = data[3]
                             platform_build_obj.copy_filesinc_from_other(default_build_info)
 
-    def create_export_presets(self) -> None:
-        lines_to_write = []
+    def process_all_globs(self) -> None:
         os.chdir("game/")
-        for build_info in builds_by_platform:
+        for build_info in self.builds_by_platform:
             build_info.process_globs()
         os.chdir("..")
+
+    def get_lines_from_existing_preset_file(self) -> list:
+        lines_to_write = []
         with open('game/export_presets.cfg','r') as export_presets_file:
-            var build : BuildInfo
+            build : BuildInfo
             for line in export_presets_file:
                 if line.startswith('name='):
-                    for build_inf in builds_by_platform:
+                    for build_inf in self.builds_by_platform:
                         if build_inf.platform_template_name == line[6:-2]:
                             build = build_inf
                             break
@@ -51,14 +53,18 @@ class BuildsToBuild:
                     lines_to_write.append(build.get_line_of_files_for_export_template())
                 else:
                     lines_to_write.append(line)
+        return lines_to_write
+
+    def create_export_presets(self) -> None:
+        self.process_all_globs()
         with open('game/export_presets.cfg','w') as export_presets_file:
-            export_presets_file.writelines(lines_to_write)
+            export_presets_file.writelines(self.get_lines_from_existing_preset_file())
 
     def create_builds(self) -> int:
-        for platform in builds_by_platform:
+        for platform in self.builds_by_platform:
             sp_state = platform.create_build()
-            if sp_state.return_code != 0:
-                return sp_state.return_code
+            if sp_state.returncode != 0:
+                return sp_state.returncode
         return 0
 
 class BuildInfo:
@@ -69,22 +75,22 @@ class BuildInfo:
     _add_globs : list = []
     _remove_globs : list = []
 
-    def copy_filesinc_from_other(self,other_build_info:BuildInfo) -> None:
+    def copy_filesinc_from_other(self,other_build_info) -> None:
         self._add_globs = other_build_info._add_globs.copy()
         self._remove_globs = other_build_info._remove_globs.copy()
         self.files_included = other_build_info.files_included.copy()
 
     def add_glob_to_include(self,path_to_expand:str) -> None:
-        _add_globs.append(path_to_expand)
+        self._add_globs.append(path_to_expand)
 
     def add_glob_to_exclude(self,path_to_expand:str) -> None:
-        _remove_globs.append(path_to_expand)
+        self._remove_globs.append(path_to_expand)
 
     def process_globs(self) -> None:
         for path_to_expand in _add_globs:
-            _add_files_included_from_glob(path_to_expand)
+            self._add_files_included_from_glob(path_to_expand)
         for path_to_expand in _remove_globs:
-            _remove_files_included_from_glob(path_to_expand)
+            self._remove_files_included_from_glob(path_to_expand)
 
     def _add_files_included_from_glob(self,path_to_expand:str) -> None:
         files_to_append : list = glob.glob(path_to_expand)
@@ -99,7 +105,7 @@ class BuildInfo:
                 self.files_included.remove(remove_filename)
 
     def get_line_of_files_for_export_template(self) -> str:
-        return 'export_files="{0}"\n'.format('", "'.join(_get_game_local_files_to_include()))
+        return 'export_files=PoolStringArray( "{0}" )\n'.format('", "'.join(self._get_game_local_files_to_include()))
 
     def _get_game_local_files_to_include(self) -> list:
         local_files = []
@@ -115,7 +121,7 @@ def run() -> list:
     builds = BuildsToBuild()
     builds.read_build_info_from_config()
     builds.create_export_presets()
-    builds_status = builds.create_builds():
+    builds_status = builds.create_builds()
     if builds_status != 0:
         sys.exit(builds_status)
     return builds.builds_by_platform
