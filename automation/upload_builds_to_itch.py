@@ -25,6 +25,8 @@ class BuildsToUpload:
         if self.itch_user == "" or self.game_name == "":
             return 0
         for build_info in builds_by_platform:
+            if not (build_info.itch_channel_name and build_info.build_dir):
+                continue
             sp_status = subprocess.run([
                     "butler",
                     "push",

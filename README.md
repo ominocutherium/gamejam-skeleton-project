@@ -52,16 +52,17 @@ The automation scripts also create and use `automation/working_tree_config.txt` 
 
 ## TODO (This repository)
 
-* [ ] Implement script which reads `automation/config.txt` and creates export templates; prior to build step
-* [ ] Implement builds
-* [ ] Implement automatic pushing to itch
+* [x] Implement script which reads `automation/config.txt` and creates export templates; prior to build step
+* [x] Implement builds
+* [x] Implement automatic pushing to itch
 * [ ] Blacklist a set of dates for pushing to itch according to config (for, possibly, Godot Wild Jam in which game updates are not allowed during judging)
 * [ ] Implement unit tests for already implemented scripts:
 	* [x] build_docs.py
-	* [ ] build_game.py
+	* [x] build_game.py
 	* [ ] developer-pre-commit.py
 	* [ ] developer-post-commit.py
-	* [ ] install.py
+	* [x] install.py
 	* [ ] verify_code_quality.py
-	* [ ] verify_staged_paths_in_commit.py
-* [ ] Hook running of Python unit tests into code verification steps (after ensuring it is an automation script only commit)
+	* [x] verify_staged_paths_in_commit.py
+* [x] Hook running of Python unit tests into code verification steps (after ensuring it is an automation script only commit)
+* [ ] Make a helper script (not part of the CI process) which automatically creates test files for python scripts (using unittest and unittest.mock) and GDScript classes (using Gut, and reading from project.godot to attempt to set up dependency doubles beforehand)

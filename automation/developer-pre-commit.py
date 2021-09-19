@@ -9,7 +9,7 @@ sys.path.append(os.getcwd())
 
 import automation.verify_staged_paths_in_commit as v_st_path
 import automation.verify_code_quality as tests
-
+import automation.script_unit_tests as script_tests
 
 def run():
     staged_paths = v_st_path.run()
@@ -18,6 +18,9 @@ def run():
         sys.exit(1)
     if staged_paths.game_files_changed:
         if not tests.run() == 0:
+            sys.exit(1)
+    if staged_paths.automation_code_changed:
+        if not script_tests.run():
             sys.exit(1)
     with open(os.path.join('automation','post_commit.json'),mode='w') as what_changed:
             what_changed.write(staged_paths.dump())
