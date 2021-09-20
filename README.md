@@ -44,19 +44,22 @@ Various build information is stored in `automation/config.txt`, which is intende
 
 * For each directory of unit tests, make a line with `test_dir` then the path of the directory of GUT tests relative to `game/`, e.g. `test_dir tests/game_mechanics` to run the test scripts located in `game/tests/game_mechanics/`.
 * For each document, make a line with `docs_defaults` then the path of the YAML-formatted defaults file to use relative to `docs/`, e.g. `docs_defaults features.yaml` for a defaults file located at `docs/features.yaml`.
-* For each platform to export, make a line with `build_platform` then the name of the platform in the export template (will likely be `Linux/X11`, `Mac OSX`, `Windows Desktop`, `HTML5`, etc.), then the one-word, all-lowercase name of the channel, then the export directory for the project (relative to `game/`. E.g. the export directory can be included as `exports/my_game_name_html5` but the scripts will build in `game/exports/my_game_name_html5`.
 * To include files in the export presets, make a line that starts with `export_include` and then a path with wildcards; e.g. `game_state/*.gd`. '*' wildcards are expanded, and paths are relative to `game/`, e.g. if `game_state/*.gd` is specified, then `game/game_state/player_data.gd` will be included as `res://game_state/player_data.gd` in the export preset.
 * To exclude files in export presets which would otherwise be included due to a wildcard include pattern, specify them with a line that starts with `export_exclude`. Like includes, these are relative to `game/` and therefore relative to `res://`.
-* For Itch uploads, make a line which starts with `itch_user` and then the username of the project creator (must match the game's url). Also, make a second line that starts with `itch_game_name`
+* For each platform to export, make a line with `build_platform` then the following: a one-word, all-lowercase name for the platform (used by butler for the channel name), the export directory for that platform (relative to `game/`), then lastly the name of the platform in the export preset (will likely be `Linux/X11`, `Mac OSX`, `Windows Desktop`, `HTML5`, etc.)
+* Any `export_include` and `export_include` lines AFTER the definition of a build platform will apply to the most recently defined platform only (e.g. export some additional Javascript files in the HTML5 build only).
+* For Itch uploads, make a line which starts with `itch_config` and include the username of the project creator followed by the game name (must match the game's url). You must configure `butler` with login credentials to have permission to push to this url (automatic if you are the project creator, otherwise have the creator add you as a contributor). `butler` will push all of the builds to channels named as the first argument in the `build_platform` entry for that platform.
 
 Here is an example file:
 ```
-test_dir tests/game_mechanics
-docs_defaults docs/game_design_doc.md
-build_platform HTML5 html5 exports/my_game_name_html5
 export_include game_state/*
 export_include environments/*
 export_exclude environments/placeholder_texture.png
+test_dir tests/game_mechanics
+docs_defaults docs/game_design_doc.md
+build_platform html5 exports/my_game_name_html5 HTML5
+export_include js/script_only_relevant_to_html5_build.js
+build_platform windows exports/my_game_name_win Windows Desktop
 itch_config myusername my_game_name
 ```
 
