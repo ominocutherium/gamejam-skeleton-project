@@ -31,16 +31,19 @@ class BuildsObjTestCase(unittest.TestCase):
     @mock.patch('automation.build_game.os.path.exists')
     @mock.patch('automation.build_game.BuildInfo')
     def test_read_build_info(self, build_inf_mock, exists_mock, join_mock) -> None:
-        m = mock.mock_open(read_data="docs_defaults docs.yaml\n\ninclude_files game_state/*.gd\nexclude_files */demo.gd\nbuild_platform HTML5 html5 exports/game_html5/\ninclude_files html5_specific/*.tscn\nbuild_platform Linux/X11 linux exports/game_linux/")
+        m = mock.mock_open(read_data="docs_defaults docs.yaml\n\ninclude_files game_state/*.gd\nexclude_files */demo.gd\nbuild_platform html5 exports/game_html5/ HTML5\ninclude_files html5_specific/*.tscn\nbuild_platform linux exports/game_linux/ Linux/X11\nbuild_platform macosx exports/game_macosx Mac OSX\n")
         btb_inst = automation.build_game.BuildsToBuild()
         btb_inst.builds_by_platform = []
         with mock.patch('automation.build_game.open',m) as file_mock:
             btb_inst.read_build_info_from_config()
-        self.assertEqual(len(btb_inst.builds_by_platform),2)
+        self.assertEqual(len(btb_inst.builds_by_platform),3)
         default_build_obj_mock = None
         # TODO: configure side_effect for the BuildInfo mock to have different return values for each call
         if len(btb_inst.builds_by_platform) > 0:
             btb_inst.builds_by_platform[0].add_glob_to_include.assert_called_with("html5_specific/*.tscn")
+            self.assertEqual(btb_inst.builds_by_platform[0].itch_channel_name,"macosx")
+            self.assertEqual(btb_inst.builds_by_platform[0].build_dir,"exports/game_macosx")
+            self.assertEqual(btb_inst.builds_by_platform[0].platform_template_name,"Mac OSX")
         for build_obj_mock in btb_inst.builds_by_platform:
             build_obj_mock.copy_filesinc_from_other.assert_called()
             self.assertTrue(build_obj_mock.platform_template_name)

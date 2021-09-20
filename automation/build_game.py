@@ -17,7 +17,7 @@ class BuildsToBuild:
                 platform_build_obj : BuildInfo = default_build_info
                 for line in config_file:
                     line_without_newline = line[:-1]
-                    data = line_without_newline.split()
+                    data = line_without_newline.split(None,3)
                     if len(data) > 1:
                         if data[0] == "include_files":
                             filepath_to_expand = line_without_newline.split(None,1)[1]
@@ -28,9 +28,9 @@ class BuildsToBuild:
                         elif data[0] == "build_platform" and len(data) > 3:
                             platform_build_obj = BuildInfo()
                             self.builds_by_platform.append(platform_build_obj)
-                            platform_build_obj.platform_template_name = data[1]
-                            platform_build_obj.itch_channel_name = data[2]
-                            platform_build_obj.build_dir = data[3]
+                            platform_build_obj.itch_channel_name = data[1]
+                            platform_build_obj.build_dir = data[2]
+                            platform_build_obj.platform_template_name = data[3]
                             platform_build_obj.copy_filesinc_from_other(default_build_info)
 
     def process_all_globs(self) -> None:
