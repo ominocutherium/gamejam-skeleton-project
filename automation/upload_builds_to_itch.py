@@ -3,6 +3,7 @@
 # Part of ominocutherium's godot gamejam skeleton project.
 
 import subprocess
+import os
 
 class BuildsToUpload:
     builds_by_platform = []
@@ -16,25 +17,25 @@ class BuildsToUpload:
         if os.path.exists(os.path.join('automation','config.txt')):
             with open(os.path.join('automation','config.txt')) as config_file: 
                 for line in config_file:
-                    if len(line.split()) > 2:
-                        if line.split()[0] == "itch_config":
+                    if len(line[:-1].split()) > 2:
+                        if line[:-1].split()[0] == "itch_config":
                             self.itch_user = line.split()[1]
                             self.game_name = line.split()[2]
    
     def push_builds(self) -> int:
         if self.itch_user == "" or self.game_name == "":
             return 0
-        for build_info in builds_by_platform:
+        for build_info in self.builds_by_platform:
             if not (build_info.itch_channel_name and build_info.build_dir):
                 continue
             sp_status = subprocess.run([
                     "butler",
                     "push",
-                    build_info.build_dir,
+                    "game/" + build_info.build_dir,
                     self.itch_user + "/" + self.game_name + ":{0}".format(build_info.itch_channel_name)
                     ])
-            if sp_status.return_code != 0:
-                return sp_status.return_code
+            if sp_status.returncode != 0:
+                return sp_status.returncode
         return 0
 
 # No run function because requires data from another module ('automation/build_game') to work.
