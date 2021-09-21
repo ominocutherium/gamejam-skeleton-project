@@ -21,7 +21,7 @@ Then you are done! Each time you make changes to your game and commit them to `m
 
 * Create a new repository with this one as a template.
 * Highly recommended: install and setup Git LFS in your new repository: `git lfs track *.png`. Do this for all binary filetypes you anticipate using; `*.kra`, `*.psd`, `*.blend`, etc.
-* Start the Godot project itself in the `game/` directory. I.e. `project.godot` should be located here: `game/project.godot'. Make sure to immediately set the name of the new project to the game's actual name, so it's not just called "game" in Godot's project list.
+* Start the Godot project itself in the `game/` directory. I.e. `project.godot` should be located here: `game/project.godot`. Make sure to immediately set the name of the new project to the game's actual name, so it's not just called "game" in Godot's project list.
 * Install GUT through Godot's asset library for unit testing (as well as any other Godot addons you wish to use for your project).
 * Lastly, remember to edit your config file `automation/config.txt` (see "Configuring Builds" below), create your export presets (`game/export_presets.cfg`), and overwrite `README.md` with information about your project before committing for the first time.
 * After each time you clone your new project, run `automation/install.py` from the command line in the root directory. You will be prompted for a role. Entering the "developer" role will install the automated build scripts to the pre-commit and post-commit hooks. The "artist" role is not yet implemented.
@@ -75,6 +75,18 @@ Another file which is necessary for the scripts to work is `game/export_presets.
 * Godot Unit Test (GUT) addon in project in `game/addons/gut/`
 * butler by Itch.io (only for uploading to itch.io)
 * Pandoc (for compiling markdown docs into other formats)
+
+## Getting Updates
+
+If you made your project by *cloning* this repository, you can use `git fetch` and `git cherry-pick` (do not `pull`) to apply changes from commits to automation scripts.
+
+However, if you used this repository as a template repository, or simply copied the `automation/` directory, you won't be able to cherry-pick because the two projects will not share any common history (this also applies if you rebased your game repository for any reason; I ended up doing this with the initial game projects I made  because I needed to remove all traces of my personal email address). You can instead create and apply patches from diffs.
+
+```
+git diff master~1 HEAD > ../script_patch.txt
+cd ../MyGameRepository
+git apply ../script_patch.txt && git commit -a -m "Patch updates to scripts"
+```
 
 ## TODO (This repository)
 
