@@ -155,9 +155,17 @@ class BuildInfoTestCase(unittest.TestCase):
         build_inf_instance.add_glob_to_exclude(new_glob)
         self.assertIn(new_glob,build_inf_instance._remove_globs)
 
-    @unittest.skip('Pending test implementation')
-    def test_process_globs(self) -> None:
-        self.assertTrue(False)
+    @mock.patch('automation.build_game.BuildInfo._add_files_included_from_glob')
+    @mock.patch('automation.build_game.BuildInfo._remove_files_included_from_glob')
+    def test_process_globs(self, rem_file_mock, add_file_mock) -> None:
+        build_inf_instance = automation.build_game.BuildInfo()
+        build_inf_instance._add_globs = ["glob1","glob2"]
+        build_inf_instance._remove_globs = ["glob1","glob2"]
+        build_inf_instance.process_globs()
+        add_file_mock.assert_any_call('glob1')
+        add_file_mock.assert_any_call('glob2')
+        rem_file_mock.assert_any_call('glob1')
+        rem_file_mock.assert_any_call('glob2')
 
     @mock.patch('automation.build_game.glob.glob')
     def test_add_files_inc(self,glob_mock) -> None:

@@ -109,9 +109,9 @@ class BuildInfo:
         self._remove_globs.append(path_to_expand)
 
     def process_globs(self) -> None:
-        for path_to_expand in _add_globs:
+        for path_to_expand in self._add_globs:
             self._add_files_included_from_glob(path_to_expand)
-        for path_to_expand in _remove_globs:
+        for path_to_expand in self._remove_globs:
             self._remove_files_included_from_glob(path_to_expand)
 
     def _add_files_included_from_glob(self,path_to_expand:str) -> None:
