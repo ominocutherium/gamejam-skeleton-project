@@ -41,10 +41,10 @@ class BuildsToBuild:
                     line_without_newline = line[:-1]
                     data = line_without_newline.split(None,3)
                     if len(data) > 1:
-                        if data[0] == "include_files":
+                        if data[0] == "export_include":
                             filepath_to_expand = line_without_newline.split(None,1)[1]
                             platform_build_obj.add_glob_to_include(filepath_to_expand)
-                        elif data[0] == "exclude_files":
+                        elif data[0] == "export_exclude":
                             filepath_to_expand = line_without_newline.split(None,1)[1]
                             platform_build_obj.add_glob_to_exclude(filepath_to_expand)
                         elif data[0] == "build_platform" and len(data) > 3:
@@ -54,6 +54,7 @@ class BuildsToBuild:
                             platform_build_obj.build_dir = data[2]
                             platform_build_obj.platform_template_name = data[3]
                             platform_build_obj.copy_filesinc_from_other(default_build_info)
+        return default_build_info
 
     def process_all_globs(self) -> None:
         os.chdir("game/")
@@ -79,11 +80,14 @@ class BuildsToBuild:
 
     def create_export_presets(self) -> None:
         self.process_all_globs()
+        lines_to_write = self.get_lines_from_existing_preset_file()
         with open('game/export_presets.cfg','w') as export_presets_file:
-            export_presets_file.writelines(self.get_lines_from_existing_preset_file())
+            for line_to_write in lines_to_write:
+                export_presets_file.write(line_to_write)
 
     def create_builds(self) -> int:
         for platform in self.builds_by_platform:
+            pass
             sp_state = platform.create_build()
             if sp_state.returncode != 0:
                 return sp_state.returncode
@@ -131,7 +135,7 @@ class BuildInfo:
 
     def _get_game_local_files_to_include(self) -> list:
         local_files = []
-        for file in files_included:
+        for file in self.files_included:
             local_files.append("res://" + file)
         return local_files
 

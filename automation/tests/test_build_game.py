@@ -53,7 +53,7 @@ class BuildsObjTestCase(unittest.TestCase):
     @mock.patch('automation.build_game.os.path.exists')
     @mock.patch('automation.build_game.BuildInfo')
     def test_read_build_info(self, build_inf_mock, exists_mock, join_mock) -> None:
-        m = mock.mock_open(read_data="docs_defaults docs.yaml\n\ninclude_files game_state/*.gd\nexclude_files */demo.gd\nbuild_platform html5 exports/game_html5/ HTML5\ninclude_files html5_specific/*.tscn\nbuild_platform linux exports/game_linux/ Linux/X11\nbuild_platform macosx exports/game_macosx Mac OSX\n")
+        m = mock.mock_open(read_data="docs_defaults docs.yaml\n\nexport_include game_state/*.gd\nexport_exclude */demo.gd\nbuild_platform html5 exports/game_html5/ HTML5\nexport_include html5_specific/*.tscn\nbuild_platform linux exports/game_linux/ Linux/X11\nbuild_platform macosx exports/game_macosx Mac OSX\n")
         btb_inst = automation.build_game.BuildsToBuild()
         btb_inst.builds_by_platform = []
         with mock.patch('automation.build_game.open',m) as file_mock:
@@ -108,7 +108,7 @@ class BuildsObjTestCase(unittest.TestCase):
         m = mock.mock_open()
         with mock.patch('automation.build_game.open',m) as presets_write:
             btb_inst.create_export_presets()
-        m().writelines.assert_called_with(lines_list)
+        m().write.assert_any_call(lines_list[0])
         process_globs_mock.assert_called()
         get_lines_mock.assert_called()
 
