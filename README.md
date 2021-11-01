@@ -10,12 +10,12 @@ If you are starting a new project, see the "Setup" section below.
 
 * If you have an existing game, move the whole game project (minus `README.md` if you have one) to a `game/` subfolder, then copy the entire `automation/` folder from this project into your project folder.
 * Run `python automation/install.py` in your terminal.
-* If you want to run unit tests for your game scripts, install GUT in your Godot project if it isn't already.
+* If you want to run unit tests for your game scripts, install GUT from the asset library in your Godot project if it isn't already.
 * Ensure you have export presets set up for all of your intended platforms in `game/export_presets.cfg`.
 * Edit your config file `automation/config.txt` to match the presets in your export presets file and filters for the files you want to include/exclude in your builds. See "Configuring Builds" below.
 * Commit your changes (or setup Git in your project if you have not)
 
-Then you are done! Each time you make changes to your game and commit them to `master`, your project will export automatically.
+Now, each time you make changes to your game and commit them to `master`, your project will export automatically.
 
 ## New Project Setup
 
@@ -30,13 +30,11 @@ Attempting to run the Godot project without GUT installed will create an error a
 
 ## Automated Builds
 
-In the spirit of continuous integration and smooth flow from development to deployment, there are scripts to support re-building and re-uploading the game each time a change has been made. The scripts included in `automation/` are intended for single-coder teams where it may be slightly more efficient for the developer to run the tests and builds on their own computer. This pipeline has many of the features expected of a CI workflow with less complexity and easier security.
+This repository primarily consists of **local** scripts to support re-building and re-uploading the game each time a change has been made. Why local? Simpler to maintain or disable if need be, and uses less complexity/bandwidth than a CI solution such as Actions. The scripts included in `automation/` are intended for single-coder teams where it may be slightly more efficient for the developer to run the tests and builds on their own computer. This pipeline has many of the features expected of a CI workflow with less complexity and easier security.
 
-The build process only runs in `master` branch, so you can use additional branches for staging purposes without triggering the build. Every time you attempt to commit to master as a developer, the specified tests are run. If all the tests pass, the commit is accepted, and, after the commit completes, the project is exported to all specified platforms (and, if you have Itch.io butler configured, pushed to your Itch.io account, allowing players to access your changes immediately).
+The build process only runs in `master` branch ([customizing it to a different primary branch name is a later planned feature](https://github.com/ominocutherium/gamejam-skeleton-project/issues/3))), so you can use additional branches for staging purposes without triggering the build. Every time you attempt to commit to master as a developer, the specified tests are run. If all the tests pass, the commit is accepted, and, after the commit completes, the project is exported to all specified platforms (and, if you have Itch.io butler configured, pushed to your Itch.io account, allowing players to access your changes immediately).
 
-Eventually, though it isn't implemented now, I intend to implement the automated builds as Github workflows, too, so that the need to have certain tools installed is removed, and so that builds can be triggered by anyone on the team. But, because this approach does not have the security and simplicity advantage that running the whole process on the developer's own computer does, so the offline build scripts will be maintained as a higher priority.
-
-Additionally, documentation has an automatic build process associated with it. Modular single-heading markdown files can be compiled together into a reader-friendly webpage or ebook through the use of a defaults file, which allows ad hoc addition, removal, or re-ordering of chapters. Example use: an "upcoming features & roadmap" doc and a "implemented features & tutorials" doc are kept up to date at the same time; when a feature becomes implemented, its corresponding doc chapter is moved from "upcoming features" to "features and tutorials" without requiring an entire rewrite. Additionally, for game projects with a narrative, automatic script-compilation tools can bridge the gap between tools writers are familiar with and game assets, allowing for live updating of both a published game script file and the in-game script.
+Additionally, I use a script to build documentation from a Markdown source using the open source tool Pandoc. Modular single-heading markdown files can be compiled together into a reader-friendly webpage or ebook through the use of a defaults file, which allows ad hoc addition, removal, or re-ordering of chapters. Example use: an "upcoming features & roadmap" doc and a "implemented features & tutorials" doc are kept up to date at the same time; when a feature becomes implemented, its corresponding doc chapter is moved from "upcoming features" to "features and tutorials" without requiring an entire rewrite. 
 
 ### Configuring Builds
 
@@ -88,19 +86,3 @@ cd ../MyGameRepository
 git apply ../script_patch.txt && git commit -a -m "Patch updates to scripts"
 ```
 
-## TODO (This repository)
-
-* [x] Implement script which reads `automation/config.txt` and creates export templates; prior to build step
-* [x] Implement builds
-* [x] Implement automatic pushing to itch
-* [ ] Blacklist a set of dates for pushing to itch according to config (for, possibly, Godot Wild Jam in which game updates are not allowed during judging)
-* [ ] Implement unit tests for already implemented scripts:
-	* [x] build_docs.py
-	* [x] build_game.py
-	* [ ] developer-pre-commit.py
-	* [ ] developer-post-commit.py
-	* [x] install.py
-	* [ ] verify_code_quality.py
-	* [x] verify_staged_paths_in_commit.py
-* [x] Hook running of Python unit tests into code verification steps (after ensuring it is an automation script only commit)
-* [ ] Make a helper script (not part of the CI process) which automatically creates test files for python scripts (using unittest and unittest.mock) and GDScript classes (using Gut, and reading from project.godot to attempt to set up dependency doubles beforehand)
