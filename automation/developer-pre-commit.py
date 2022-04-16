@@ -32,8 +32,12 @@ sys.path.append(os.getcwd())
 import automation.verify_staged_paths_in_commit as v_st_path
 import automation.verify_code_quality as tests
 import automation.script_unit_tests as script_tests
+import automation.verify_branch_is_primary as primary
 
 def run():
+    if not primary.run():
+        print("Not the primary branch ({}). Skipping hooks.".format(primary.get_primary_branchname_from_config()))
+        return
     staged_paths = v_st_path.run()
     if not staged_paths.verify_only_content_or_automation_changes_staged_not_both():
         print("If you are making changes to your game project, you should not be making changes to the automation scripts. Hook scripts and sync tools should be kept as separate commits for the purposes of also being committed to upstream.")
