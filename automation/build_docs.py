@@ -33,13 +33,8 @@ class DocsState:
     def __init__(self):
         self.docs_default_files = []
 
-    def get_defaults_from_config(self):
-        if os.path.exists(os.path.join('automation','config.txt')):
-            with open(os.path.join('automation','config.txt')) as config_file:
-                for line in config_file:
-                    if len(line.split()) > 1:
-                        if line.split()[0] == "docs_defaults":
-                            self.docs_default_files.append(line.split()[1])
+    def get_defaults_from_config(self,config):
+        self.docs_default_files = config.docs_default_files.copy()
 
     def compile_all_docs(self):
         home_dir = os.getcwd()
@@ -48,10 +43,8 @@ class DocsState:
             process = subprocess.run(['pandoc','-d',defaults_file])
         os.chdir(home_dir)
 
-def run():
+def run(config):
     state = DocsState()
-    state.get_defaults_from_config()
+    state.get_defaults_from_config(config)
     state.compile_all_docs()
 
-if __name__ == "__main__":
-    run()

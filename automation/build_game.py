@@ -32,29 +32,21 @@ import glob
 class BuildsToBuild:
     builds_by_platform = []
 
-    def read_build_info_from_config(self):
-        if os.path.exists(os.path.join('automation','config.txt')):
-            with open(os.path.join('automation','config.txt')) as config_file:
-                default_build_info : BuildInfo = BuildInfo()
-                platform_build_obj : BuildInfo = default_build_info
-                for line in config_file:
-                    line_without_newline = line[:-1]
-                    data = line_without_newline.split(None,3)
-                    if len(data) > 1:
-                        if data[0] == "export_include":
-                            filepath_to_expand = line_without_newline.split(None,1)[1]
-                            platform_build_obj.add_glob_to_include(filepath_to_expand)
-                        elif data[0] == "export_exclude":
-                            filepath_to_expand = line_without_newline.split(None,1)[1]
-                            platform_build_obj.add_glob_to_exclude(filepath_to_expand)
-                        elif data[0] == "build_platform" and len(data) > 3:
-                            platform_build_obj = BuildInfo()
-                            self.builds_by_platform.append(platform_build_obj)
-                            platform_build_obj.itch_channel_name = data[1]
-                            platform_build_obj.build_dir = data[2]
-                            platform_build_obj.platform_template_name = data[3]
-                            platform_build_obj.copy_filesinc_from_other(default_build_info)
-        return default_build_info
+    def copy_build_info_from_config_info(self,config_info_obj):
+        default_build_info = None
+        if config_info_obj.default_build_info_object != None:
+            default_build_info = BuildInfo()
+            default_build_info.copy_from_other_struct(config_info_obj.default_build_info_object)
+        for build_inf in config_info_obj.all_build_objects:
+            if build_inf.build_type == "default":
+                continue
+            elif build_inf.build_type == "platform":
+                platform_to_build = BuildInfo()
+                platform_to_build.copy_from_other_struct(build_inf)
+                self.builds_by_platform.append(platform_to_build)
+                if default_build_info != None:
+                    platform_to_build.copy_filesinc_from_other(default_build_info)
+            # this module doesn't use "asset_pack"
 
     def process_all_globs(self) -> None:
         os.chdir("game/")
@@ -101,6 +93,20 @@ class BuildInfo:
     _add_globs : list = []
     _remove_globs : list = []
 
+    def __init__(self):
+        files_included = []
+        _add_globs = []
+        _remove_globs = []
+
+    def copy_from_other_struct(self,other_build_info) -> None:
+        for glob_to_add in other_build_info.add_globs:
+            self.add_glob_to_include(glob_to_add)
+        for glob_to_remove in other_build_info.remove_globs:
+            self.add_glob_to_exclude(glob_to_remove)
+        self.platform_template_name = other_build_info.platform_template_name
+        self.itch_channel_name = other_build_info.itch_channel_name
+        self.build_dir = other_build_info.build_dir
+
     def copy_filesinc_from_other(self,other_build_info) -> None:
         self._add_globs = other_build_info._add_globs.copy()
         self._remove_globs = other_build_info._remove_globs.copy()
@@ -143,11 +149,12 @@ class BuildInfo:
         sp_state = subprocess.run(["godot","--path","game/","--export",self.platform_template_name])
         return sp_state
 
-def run() -> list:
+def run(config) -> list:
     builds = BuildsToBuild()
-    builds.read_build_info_from_config()
+    builds.copy_build_info_from_config_info(config)
     builds.create_export_presets()
     builds_status = builds.create_builds()
     if builds_status != 0:
         sys.exit(builds_status)
     return builds.builds_by_platform
+

@@ -37,17 +37,6 @@ def verify_branch_is_primary(primary_branch_name):
         return False
 
 
-def get_primary_branchname_from_config():
-    branchname = ""
-    if os.path.exists(os.path.join('automation','config.txt')):
-        with open(os.path.join('automation','config.txt')) as config:
-            for line in config:
-                if len(line.split()) > 1:
-                    if line.split()[0] == "git_primary_branchname":
-                        branchname = line.split()[1]
-                        break
-    return branchname
-
-def run():
-    return verify_branch_is_primary(get_primary_branchname_from_config)
+def run(config):
+    return verify_branch_is_primary(config.git_primary_branchname)
 

@@ -35,14 +35,9 @@ class BuildsToUpload:
     def __init__(self,list_of_build_info:list=[]):
         self.builds_by_platform = list_of_build_info
 
-    def read_itch_user_info_from_config(self):
-        if os.path.exists(os.path.join('automation','config.txt')):
-            with open(os.path.join('automation','config.txt')) as config_file: 
-                for line in config_file:
-                    if len(line[:-1].split()) > 2:
-                        if line[:-1].split()[0] == "itch_config":
-                            self.itch_user = line.split()[1]
-                            self.game_name = line.split()[2]
+    def read_itch_user_info_from_config(self,config):
+        self.itch_user = config.itch_user
+        self.game_name = config.itch_game_name
    
     def push_builds(self) -> int:
         if self.itch_user == "" or self.game_name == "":

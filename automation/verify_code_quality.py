@@ -37,16 +37,11 @@ class PreCommitCI:
     def __init__(self):
         self.test_dirs = []
 
-    def get_test_dirs_from_config(self):
-        if os.path.exists(os.path.join('automation','config.txt')):
-            with open(os.path.join('automation','config.txt')) as config:
-                for line in config:
-                    if len(line.split()) > 1:
-                        if line.split()[0] == "test_dir":
-                            self.test_dirs.append(line.split()[1])
+    def get_test_dirs_from_config(self,config):
+        self.test_dirs = config.gut_test_dirs.copy()
 
-    def run(self):
-        self.get_test_dirs_from_config()
+    def run(self,config):
+        self.get_test_dirs_from_config(config)
         return self.run_tests()
 
     def run_tests(self):
@@ -60,7 +55,7 @@ class PreCommitCI:
             self.call_params[0] = self.stable_exec_name
         return subprocess.call(self.call_params)
 
-def run():
+def run(config):
     ci = PreCommitCI()
-    return ci.run()
+    return ci.run(config)
 
