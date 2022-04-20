@@ -25,29 +25,17 @@
 # Part of ominocutherium's godot gamejam skeleton project.
 
 import unittest
+from unittest import mock
 
-import automation.tests.test_build_docs
-import automation.tests.test_install
-import automation.tests.test_verify_code_quality
-import automation.tests.test_build_game
-import automation.tests.test_verify_paths
-import automation.tests.test_upload_builds
-import automation.tests.test_build_asset_packs
-import automation.tests.test_read_config_file
+import automation.build_additional_packs_wrapper
 
-def run():
-    for testcase in [
-            automation.tests.test_build_docs,
-            automation.tests.test_install,
-            automation.tests.test_verify_code_quality,
-            automation.tests.test_verify_paths,
-            automation.tests.test_build_game,
-            automation.tests.test_upload_builds,
-            automation.tests.test_build_asset_packs,
-            automation.tests.test_read_config_file,
-            ]:
-        tp = unittest.main(module=testcase,exit=False)
-        if tp.result.failures or tp.result.errors:
-            return False
-    return True
+class PacksToBuildTestCase(unittest.TestCase):
+    pass
 
+class AssetPackBuildInfoTestCase(unittest.TestCase):
+    pass
+
+class WrapperModuleTestCase(unittest.TestCase):
+    @unittest.skip('Pending test implementation.')
+    def test_invoke_all(self):
+        pass

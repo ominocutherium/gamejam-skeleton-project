@@ -28,15 +28,24 @@ from unittest import mock
 import automation.upload_builds_to_itch
 
 class UploadBuildsTestCase(unittest.TestCase):
-    @mock.patch('automation.upload_builds_to_itch.os.path.exists')
-    @mock.patch('automation.upload_builds_to_itch.os.path.join')
-    def test_read_user_info(self, join_mock, exists_mock):
-        m = mock.mock_open(read_data='docs_defaults thing.yaml\nbuild_platform HTML5 html5 exports/my_game_name_html5/\nitch_config myusername my_game_name\nbooger\n')
+#    @mock.patch('automation.upload_builds_to_itch.os.path.exists')
+#    @mock.patch('automation.upload_builds_to_itch.os.path.join')
+#    def test_read_user_info(self, join_mock, exists_mock):
+#        m = mock.mock_open(read_data='docs_defaults thing.yaml\nbuild_platform HTML5 html5 exports/my_game_name_html5/\nitch_config myusername my_game_name\nbooger\n')
+#        btu_instance = automation.upload_builds_to_itch.BuildsToUpload()
+#        with mock.patch('automation.upload_builds_to_itch.open',m):
+#            btu_instance.read_itch_user_info_from_config()
+#        self.assertEqual(btu_instance.itch_user,"myusername")
+#        self.assertEqual(btu_instance.game_name,"my_game_name")
+    
+    def test_read_user_info(self):
+        config_mock = mock.MagicMock()
+        config_mock.itch_user = "booger"
+        config_mock.itch_game_name = "booger-game"
         btu_instance = automation.upload_builds_to_itch.BuildsToUpload()
-        with mock.patch('automation.upload_builds_to_itch.open',m):
-            btu_instance.read_itch_user_info_from_config()
-        self.assertEqual(btu_instance.itch_user,"myusername")
-        self.assertEqual(btu_instance.game_name,"my_game_name")
+        btu_instance.read_itch_user_info_from_config(config_mock)
+        self.assertEqual(btu_instance.itch_user,"booger")
+        self.assertEqual(btu_instance.game_name,"booger-game")
 
     @mock.patch('automation.upload_builds_to_itch.subprocess.run')
     def test_push_builds(self,sub_run_mock):

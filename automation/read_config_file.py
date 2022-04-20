@@ -52,9 +52,13 @@ class ConfigFileInfo:
             self.__current_build_info_object.add_globs.append(line[:-1].split(None,1)[1])
 
     def __handle_build_info_line(self,line:str):
-        data = line[:-1].split(None,3)
+        data = line[:-1].split()
         if data[3] == "assets":
             self.__current_build_info_object = AssetPackBuildInfo()
+            if len(data) > 4:
+                self.__current_build_info_object.pack_name = data[4]
+                if len(data) > 5 and data[5] == "dlc":
+                    self.__current_build_info_object.add_to_all_platform_packs = False
         else:
             self.__current_build_info_object = PlatformBuildInfo()
             self.__current_build_info_object.platform_template_name = data[3]
@@ -124,6 +128,7 @@ class AssetPackBuildInfo(BuildInfo):
     # have all of the state but none of the behavior of build_asset_packs.AssetPackBuildInfo
     # in build_asset_packs, AssetPackBuildInfo copies from this BuildInfo on initialization
     build_type = "asset_pack"
+    pack_name = ""
 
 
 def read_config():

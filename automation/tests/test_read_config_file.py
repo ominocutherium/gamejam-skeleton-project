@@ -25,29 +25,49 @@
 # Part of ominocutherium's godot gamejam skeleton project.
 
 import unittest
+from unittest import mock
 
-import automation.tests.test_build_docs
-import automation.tests.test_install
-import automation.tests.test_verify_code_quality
-import automation.tests.test_build_game
-import automation.tests.test_verify_paths
-import automation.tests.test_upload_builds
-import automation.tests.test_build_asset_packs
-import automation.tests.test_read_config_file
+import automation.read_config_file
 
-def run():
-    for testcase in [
-            automation.tests.test_build_docs,
-            automation.tests.test_install,
-            automation.tests.test_verify_code_quality,
-            automation.tests.test_verify_paths,
-            automation.tests.test_build_game,
-            automation.tests.test_upload_builds,
-            automation.tests.test_build_asset_packs,
-            automation.tests.test_read_config_file,
-            ]:
-        tp = unittest.main(module=testcase,exit=False)
-        if tp.result.failures or tp.result.errors:
-            return False
-    return True
+class ConfigFileInfoTestCase(unittest.TestCase):
+    @unittest.skip('Pending test implementation.')
+    def test_handle_docdef(self):
+        pass
+
+    @unittest.skip('Pending test implementation.')
+    def test_handle_exportinc(self):
+        pass
+
+    @unittest.skip('Pending test implementation.')
+    def test_handle_exportexcl(self):
+        pass
+
+    @unittest.skip('Pending test implementation.')
+    def test_handle_buildinf(self):
+        pass
+
+    @unittest.skip('Pending test implementation.')
+    def test_handle_itchconf(self):
+        pass
+
+    @unittest.skip('Pending test implementation.')
+    def test_handle_testdir(self):
+        pass
+
+    @unittest.skip('Pending test implementation.')
+    def test_handle_gitbranch(self):
+        pass
+
+    @unittest.skip('Pending test implementation.')
+    def test_init(self):
+        pass
+
+    @unittest.skip('Pending test implementation.')
+    def test_read_config(self):
+        pass
+
+class ReadConfigModuleTestCase(unittest.TestCase):
+    @unittest.skip('Pending test implementation.')
+    def test_read_config(self):
+        pass
 

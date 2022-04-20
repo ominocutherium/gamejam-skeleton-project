@@ -47,6 +47,7 @@ class BuildsToBuild:
                 if default_build_info != None:
                     platform_to_build.copy_filesinc_from_other(default_build_info)
             # this module doesn't use "asset_pack"
+        return default_build_info
 
     def process_all_globs(self) -> None:
         os.chdir("game/")
