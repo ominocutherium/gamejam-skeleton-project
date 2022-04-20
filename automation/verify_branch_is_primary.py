@@ -38,5 +38,5 @@ def verify_branch_is_primary(primary_branch_name):
 
 
 def run(config):
-    return verify_branch_is_primary(config.git_primary_branchname)
+    return verify_branch_is_primary(config.git_primary_branch_name)
 
