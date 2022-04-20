@@ -135,6 +135,7 @@ class AssetPackBuildInfo(BuildInfo):
     # in build_asset_packs, AssetPackBuildInfo copies from this BuildInfo on initialization
     build_type = "asset_pack"
     pack_name = ""
+    add_to_all_platform_packs : bool = True
 
 
 def read_config():

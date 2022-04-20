@@ -42,6 +42,7 @@ class PacksToBuild:
                 continue
             pack_to_build = AssetPackBuildInfo()
             pack_to_build.copy_from_other_struct(build_inf)
+            self.list_of_packs.append(pack_to_build)
 
 
 class AssetPackBuildInfo:
@@ -60,8 +61,14 @@ class AssetPackBuildInfo:
             self.add_glob_to_exclude(glob_to_remove)
         self.itch_channel_name = other_build_info.itch_channel_name
         self.build_dir = other_build_info.build_dir
-        self.pack_name = other_build_info.build_name
+        self.pack_name = other_build_info.pack_name
         self.add_to_all_platform_packs = other_build_info.add_to_all_platform_packs
+
+    def add_glob_to_include(self,path_to_expand:str) -> None:
+        self._add_globs.append(path_to_expand)
+
+    def add_glob_to_exclude(self,path_to_expand:str) -> None:
+        self._remove_globs.append(path_to_expand)
 
     def create_temp_file_with_list_of_files_to_pack(self):
         with open(temp_filepath) as temp_file:
