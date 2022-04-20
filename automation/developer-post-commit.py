@@ -35,6 +35,7 @@ import automation.build_game as buildgame
 import automation.install as install
 import automation.upload_builds_to_itch as itchscript
 import automation.read_config_file as readconf
+import automation.build_additional_packs_wrapper as buildpacks
 
 conf = readconf.ConfigFileInfo()
 conf.read_config()
@@ -43,8 +44,21 @@ flags_from_pre_commit = {}
 with open(os.path.join('automation','post_commit.json'),mode='r') as p_commit:
     flags_from_pre_commit = json.load(p_commit)
 if flags_from_pre_commit["game_files_changed"] or flags_from_pre_commit["assets_changed"]:
+    list_of_packs = buildpacks.invoke_all(conf)
     list_of_builds = buildgame.run(conf)
-    # TODO: add asset pack builds as well
+    for build in list_of_builds:
+        if build.platform_template_name == "Mac OSX":
+            for pack in list_of_packs:
+                if pack.add_to_all_platform_packs:
+                    buildpacks.copy_pack_to_platform_build_macos(pack,os.path.join("game",build.build_dir))
+        elif build.platform_template_name == "Android":
+            for pack in list_of_packs:
+                if pack.add_to_all_platform_packs:
+                    buildpacks.copy_pack_to_platform_build_android(pack,os.path.join("game",build.build_dir))
+        else:
+            for pack in list_of_packs:
+                if pack.add_to_all_platform_packs:
+                    buildpacks.copy_pack_to_platform_build_dir_simple_case(pack,os.path.join("game",build.build_dir))
     itchupload = itchscript.BuildsToUpload(list_of_builds)
     if itchupload.builds_by_platform:
         itchupload.read_itch_user_info_from_config(conf)

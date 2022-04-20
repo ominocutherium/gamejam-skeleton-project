@@ -26,6 +26,7 @@
 
 import os
 import glob
+import shutil
 
 temp_filepath = os.path.join('automation',"files_for_pack.txt")
 
@@ -108,10 +109,26 @@ class AssetPackBuildInfo:
         subprocess.run(["godot","-s","../automation/build_additional_packs.gd","--path","game/","--no-window"])
         self.clean_up_temp_file()
 
-def invoke_all(config) -> None:
+def invoke_all(config) -> list:
     packs = PacksToBuild()
     packs.copy_build_info_from_config_info(config)
     for pack in packs.list_of_packs:
         pack.invoke()
     # This script is not responsible for copying packs to build directories. Do that in build_game (meaning this one has to be called first).
+    return packs.list_of_packs
+
+def copy_pack_to_platform_build_dir_simple_case(pack,build_dir) -> None:
+    pack_path = os.path.join("game",pack.build_dir,pack.pack_name + ".pck")
+    shutil.copyfile(pack_path,os.path.join(build_dir,pack_name + ".pck"))
+
+def copy_pack_to_platform_build_macos(pack,build_dir) -> None:
+    # requires unzipping the .app bundle, copying pack to Contents/Resources, and rezipping
+    # TODO: implement
+    pass
+
+def copy_pack_to_platform_build_android(pack,build_dir) -> None:
+    # requires unzipping the .apk package, copying pack to (where?), editing the manifest, and rezipping
+    # TODO: implement
+    pass
+
 
