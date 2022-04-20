@@ -61,8 +61,8 @@ class ConfigFileInfo:
                     self.__current_build_info_object.add_to_all_platform_packs = False
         else:
             self.__current_build_info_object = PlatformBuildInfo()
-            self.__current_build_info_object.platform_template_name = data[3]
-        self.all_build_objects = self.__current_build_info_object
+            self.__current_build_info_object.platform_template_name = line[:-1].split(None,3)[3]
+        self.all_build_objects.append(self.__current_build_info_object)
         self.__current_build_info_object.itch_channel_name = data[1]
         self.__current_build_info_object.build_dir = data[2]
 
@@ -92,6 +92,7 @@ class ConfigFileInfo:
         self.docs_default_files = []
         self.additional_packages_to_build = []
         self.__current_build_info_object = DefaultBuildInfo()
+        self.default_build_info_object = self.__current_build_info_object
         self.all_build_objects = [self.__current_build_info_object]
         self.gut_test_dirs = []
 
@@ -114,6 +115,11 @@ class BuildInfo():
     files_included : list = []
     add_globs : list = []
     remove_globs : list = []
+
+    def __init__(self):
+        self.add_globs = []
+        self.remove_globs = []
+        self.files_included = []
 
 
 class PlatformBuildInfo(BuildInfo):
