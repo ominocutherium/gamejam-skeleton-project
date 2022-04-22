@@ -71,7 +71,7 @@ class AssetPackBuildInfo:
         self._remove_globs.append(path_to_expand)
 
     def create_temp_file_with_list_of_files_to_pack(self):
-        with open(temp_filepath) as temp_file:
+        with open(temp_filepath,'r') as temp_file:
             temp_file.write_line("pack_path " + self.build_dir + '/' + self.pack_name + '.pck\n')
             for filename in self.files_included:
                 importfile_path = filename + ".import"
@@ -120,7 +120,7 @@ def invoke_all(config) -> list:
     packs = PacksToBuild()
     packs.copy_build_info_from_config_info(config)
     for pack in packs.list_of_packs:
-        pack.invoke()
+        pack.invoke(config)
     # This script is not responsible for copying packs to build directories. Do that in build_game (meaning this one has to be called first).
     return packs.list_of_packs
 
