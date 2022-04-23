@@ -47,7 +47,7 @@ func start_pack_job(f:File) -> void:
 		print("Error opening temp file code {0}".format([err]))
 		return
 	var pack_path := scan_temp_file_for_pack_path(f)
-	if pack_path == "" or not pack_path.starts_with('res://'):
+	if pack_path == "" or not pack_path.begins_with('res://'):
 		print("Couldn't extract pack path from temp file. Aborting.")
 		return
 	var packer := PCKPacker.new()
@@ -69,7 +69,7 @@ func scan_temp_file_for_pack_path(opened_file:File) -> String:
 	var line : String = ""
 	while not opened_file.eof_reached():
 		line = opened_file.get_line()
-		if line.starts_with('pack_path '):
+		if line.begins_with('pack_path '):
 			return 'res://' + line.substr(10)
 	return ""
 
@@ -78,6 +78,6 @@ func add_lines_from_opened_file_to_pck(opened_file:File,packer:PCKPacker) -> voi
 	var line : String = ""
 	while not opened_file.eof_reached():
 		line = opened_file.get_line()
-		if line != "" and File.file_exists(line):
-			packer.add_file(line)
+		if line != "" and opened_file.file_exists(line):
+			packer.add_file(line,line)
 

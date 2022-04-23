@@ -27,6 +27,7 @@
 import os
 import glob
 import shutil
+import subprocess
 
 temp_filepath = os.path.join('automation',"files_for_pack.txt")
 
@@ -71,20 +72,21 @@ class AssetPackBuildInfo:
         self._remove_globs.append(path_to_expand)
 
     def create_temp_file_with_list_of_files_to_pack(self):
-        with open(temp_filepath,'r') as temp_file:
-            temp_file.write_line("pack_path " + self.build_dir + '/' + self.pack_name + '.pck\n')
+        with open(temp_filepath,'w') as temp_file:
+            temp_file.write("pack_path " + self.build_dir + '/' + self.pack_name + '.pck\n')
             for filename in self.files_included:
                 importfile_path = filename + ".import"
                 if os.path.exists(importfile_path):
-                    temp_file.write_line(self.resolve_import_file_to_actual_resource_file(
+                    temp_file.write(self.resolve_import_file_to_actual_resource_file(
                             importfile_path)+'\n')
-                    temp_file.write_line('res://' + importfile_path + '\n')
+                    temp_file.write('res://' + importfile_path + '\n')
                 else:
-                    temp_file.write_line('res://' + filename + '\n')
+                    temp_file.write('res://' + filename + '\n')
 
     def clean_up_temp_file(self) -> None:
         if os.path.exists(temp_filepath):
             os.remove(temp_filepath)
+
 
     def resolve_import_file_to_actual_resource_file(self,import_file_path):
         with open(import_file_path,"r") as opened_import_file:
@@ -121,7 +123,7 @@ def invoke_all(config) -> list:
     packs.copy_build_info_from_config_info(config)
     for pack in packs.list_of_packs:
         pack.invoke(config)
-    # This script is not responsible for copying packs to build directories. Do that in build_game (meaning this one has to be called first).
+    create_empty_packs_of_required_packs(packs)
     return packs.list_of_packs
 
 def copy_pack_to_platform_build_dir_simple_case(pack,build_dir) -> None:
@@ -138,4 +140,50 @@ def copy_pack_to_platform_build_android(pack,build_dir) -> None:
     # TODO: implement
     pass
 
+def create_empty_packs_of_required_packs(ptb) -> None:
+    # Note: all packs should be added to the gitignore!
+    # This is for game projects which expect to load a pack of assets on init and will error out if they don't.
+    # Ergo, running the project from the editor requires loading a pck.
+    # An empty pack with only an empty resource named "empty.tres" is used,
+    # so that the resources do not collide with resources imported by the editor.
+    create_empty : bool = False
+    packs_to_mock : list = []
+    for pack in ptb.list_of_packs:
+        if pack.add_to_all_platform_packs:
+            create_empty = True
+            packs_to_mock.append(pack)
+    if create_empty:
+        invoke_empty()
+    for pack in packs_to_mock:
+        shutil.copyfile(os.path.join('game',"empty.pck"),os.path.join('game',pack.pack_name + '.pck'))
+
+def create_empty_temp_file():
+    with open(temp_filepath,'w') as temp_file:
+        temp_file.write("pack_path " + 'empty.pck\n')
+        temp_file.write("res://empty.tres\n")
+
+def clean_up_temp_file() -> None:
+    if os.path.exists(temp_filepath):
+        os.remove(temp_filepath)
+
+def create_empty_resource_for_empty_temp_file():
+    with open(os.path.join('game','empty.tres'),'w') as empty_tres:
+        empty_tres.write('[gd_resource type="Resource" format=2]\n')
+        empty_tres.write('\n')
+        empty_tres.write('[resource]\n')
+
+def clean_up_empty_resource() -> None:
+    if os.path.exists(os.path.join('game','empty.tres')):
+        os.remove(os.path.join('game','empty.tres'))
+
+def invoke_empty() -> None:
+    create_empty_temp_file()
+    create_empty_resource_for_empty_temp_file()
+    subprocess.run(["godot","-s","../automation/build_additional_packs.gd","--path","game/","--no-window"])
+    clean_up_temp_file()
+    clean_up_empty_resource()
+
+def remove_empty_pack() -> None:
+    if os.path.exists(os.path.join('game','empty.pck')):
+        os.remove(os.path.join('game','empty.pck'))
 
